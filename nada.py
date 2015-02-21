@@ -78,3 +78,18 @@ for archetype in archetypes:
         print archname
         os.remove(archetype)
         os.remove(archetype + ".meta")
+
+print "Removing extra tilemaps..."
+
+tmaps = glob.glob(os.path.expanduser("~\Documents\GitHub\\" + ghn + "\THE GAME\Content\*_TileMap[0-9][0-9].*"))
+
+levelnames = []
+
+for level in levels:
+    levelnames.append(level[level.rfind("\\") + 1:level.find(".")])
+
+for tmap in tmaps:
+    tname = tmap[tmap.rfind("\\") + 1:tmap.find("_")]
+    if not tname in levelnames:
+        print tname
+        os.remove(tmap)
