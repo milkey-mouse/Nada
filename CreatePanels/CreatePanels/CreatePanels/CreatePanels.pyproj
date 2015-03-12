@@ -12,6 +12,7 @@
     <OutputPath>.</OutputPath>
     <Name>CreatePanels</Name>
     <RootNamespace>CreatePanels</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
