@@ -1,0 +1,13 @@
+Collectible,InventoryItem,Boolean
+Collectible,PlaySoundOnPickup,Boolean
+ChaseTarget,RangeTargeting,Boolean
+ChaseTarget,AggroRange,Real
+ChaseTarget,LineOfSightTargeting,Boolean
+ChaseTarget,AutoSpin,Boolean
+ChaseTarget,NumberEnemiesSeeThrough,Integer
+DamageOnCollide,PlaySoundWhenDamage,Boolean
+DamageOnCollide,PlaySoundWhenDestroy,Boolean
+DamageOnCollide,OnlyDieOnEnemies,Boolean
+DamageOnCollide,OnlyDieOnPlayer,Boolean
+DamageOnCollide,DelayDeath,Boolean
+DamageOnCollide,OnlyDieOnBCF,Boolean

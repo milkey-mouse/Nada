@@ -1,0 +1,57 @@
+class PanelLogic : ZilchComponent
+{
+	{% for arch in archetypes %}
+    var {{ arch.caps_name }} : Cog = null;
+	{% endfor %}
+    
+    var MainSpace : Space = null;
+    
+    var Target : Cog = null;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+    
+    
+    
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+		if(this.Target == null)
+		{
+			return;
+		}
+	{% for arch in archetypes %}
+		if(this.Target.ArchetypeName == "{{ arch.name }}")
+        {
+			if(this.{{ arch.caps_name }} == null)
+			{
+			    this.MainSpace = this.GameSession.FindSpaceByName("Main");
+			    this.{{ arch.caps_name }} = this.Target;
+				{% for var in arch.vars %}
+				if(this.Owner.FindChildByName("{{ var.local }}").TextBox.Focused == false)
+				{
+					{%- if var.number -%}
+				    this.Owner.FindChildByName("{{ var.local }}").TextBox.Number = this.{{ arch.caps_name }}.{{ var.full }};
+					{% elif var.bool %}
+					this.Owner.FindChildByName("{{ var.local }}").TextBox.BoolVal = this.{{ arch.caps_name }}.{{ var.full }};
+					{%- endif %}
+				    this.Owner.FindChildByName("{{ var.local }}").TextBox.Text = "`this.{{ arch.caps_name }}.{{ var.full }}`";
+				}
+				{% endfor %}
+			}
+			{% for var in arch.vars %}
+			{%- if var.integer -%}
+			this.{{ arch.caps_name }}.{{ var.full }} = Math.Round(this.Owner.FindChildByName("{{ var.local }}").TextBox.Number) as Integer;
+			{% elif var.real %}
+			this.{{ arch.caps_name }}.{{ var.full }} = this.Owner.FindChildByName("{{ var.local }}").TextBox.Number;
+			{% elif var.string %}
+			this.{{ arch.caps_name }}.{{ var.full }} = this.Owner.FindChildByName("{{ var.local }}").TextBox.Text;
+			{% elif var.bool %}
+			this.{{ arch.caps_name }}.{{ var.full }} = this.Owner.FindChildByName("{{ var.local }}").TextBox.BoolVal;
+			{%- endif %}
+			{% endfor %}
+		}
+	{% endfor %}
+    }
+}
