@@ -1,0 +1,46 @@
+class PanelUI : ZilchComponent
+{
+    var LastType : String = "";
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        if(this.Owner.PanelLogic.Target.ArchetypeName == null)
+        {
+            return;
+        }
+        if(this.Owner.PanelLogic.Target.ArchetypeName == this.LastType)
+        {
+            return;
+        }
+		var tb : Real = 0.055;
+		{% for arch in archetypes %}
+        if(this.Owner.PanelLogic.Target.ArchetypeName == "{{ arch.name }}")
+        {
+			{% for var in arch.vars %}
+            var {{ var.lower }} : Cog = this.Space.Create(Archetype.Find("TextBox"));
+            {{ var.lower }}.AttachTo(this.Owner);
+            {{ var.lower }}.Name = "{{ var.local }}";
+            {{ var.lower }}.Transform.Translation = Real3(0.04, tb, 0.2);
+			{%- if var.integer -%}
+            {{ var.lower }}.TextBox.NumberFilter = true;
+			{% elif var.real %}
+			{{ var.lower }}.TextBox.NumberFilter = true;
+			{% elif var.bool %}
+			{{ var.lower }}.TextBox.BoolFilter = true;
+			{%- endif %}
+            var {{ var.lower }}text : Cog = this.Space.Create(Archetype.Find("GodLabel"));
+            {{ var.lower }}text.AttachTo(this.Owner);
+            {{ var.lower }}text.SpriteText.Text = "{{ var.local }}";
+            {{ var.lower }}text.Transform.Translation = Real3(-0.055, tb + 0.003, 0.2);
+            tb -= 0.010;
+			{% endfor %}
+        }
+		{% endfor %}
+        this.LastType = this.Owner.PanelLogic.Target.ArchetypeName;
+    }
+}

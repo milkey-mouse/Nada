@@ -49,7 +49,7 @@ game_remove_z += core_remove_z
 for zilch in game_remove_z:
     zilches.remove(zilch)
 
-accepted_types = ["Boolean", "Real", "Integer", "String"]
+accepted_types = ["Real", "Integer", "String"] #"Boolean", 
 
 zilch_vars = {}
 
@@ -103,7 +103,7 @@ print "Loading templates..."
 
 env = Environment(loader=FileSystemLoader('templates'))
 tpanel = env.get_template('TemplatePanel.z')
-tpanelarch = env.get_template('TemplatePanel.z')
+tpanelform = env.get_template('TemplateFormatter.z')
 
 print "Rebuilding library..."
 
@@ -113,6 +113,7 @@ for arch in arch_vars:
     _jarch = {}
     _jarch["name"] = arch
     _jarch["caps_name"] = arch.capitalize()
+    _jarch["lower_name"] = arch.lower()
     _jvars = []
     for script in arch_vars[arch]:
         for var in script:
@@ -120,6 +121,7 @@ for arch in arch_vars:
             print "Building " + siq + "..."
             _jvar = {}
             _jvar["full"] = siq
+            _jvar["lower"] = (arch + "_" + siq.replace(".", "_")).lower()
             _jvar["local"] = var[1]
             if var[2] == "Real":
                 _jvar["real"] = True
@@ -149,15 +151,30 @@ for arch in arch_vars:
 
 print "Building PanelLogic.z..."
 
-with open(os.path.expanduser("~\Documents\GitHub\\" + ghn + "\THE GAME\PanelLogic.z"), "w") as zilchscript: #Content
+with open(os.path.expanduser("~\Documents\GitHub\\" + ghn + "\THE GAME\Content\PanelLogic.z"), "w") as zilchscript:
     panel_result = tpanel.render(archetypes=jinja_arches)
     print panel_result
     zilchscript.write(panel_result)
+    zilchscript.close()
+
+print "Building PanelFormatter.z..."
+
+with open(os.path.expanduser("~\Documents\GitHub\\" + ghn + "\THE GAME\Content\PanelUI.z"), "w") as zilchscript:
+    panel_result = tpanelform.render(archetypes=jinja_arches)
+    print panel_result
+    zilchscript.write(panel_result)
+    zilchscript.close()
+
+#with open(os.path.expanduser("~\Documents\GitHub\\" + ghn + "\THE GAME\Content\PanelLogic.z"), "w+") as zilchscript:
+#    panel_result = tpanel.render(archetypes=jinja_arches)
+#    print panel_result
+#    zilchscript.write(panel_result)
+#    zilchscript.close()
 
 
 print "Done!"
 
-os.startfile(os.path.expanduser("~\Documents\GitHub\\" + ghn + "\THE GAME\PanelLogic.z"))
+#os.startfile(os.path.expanduser("~\Documents\GitHub\\" + ghn + "\THE GAME\Content\PanelLogic.z"))
 
 if False:
     answers = {}

@@ -21,6 +21,10 @@ class PanelLogic : ZilchComponent
 		{
 			return;
 		}
+		if(this.Owner.PanelUI.LastType != this.Target.ArchetypeName)
+        {
+            return;
+        }
 	{% for arch in archetypes %}
 		if(this.Target.ArchetypeName == "{{ arch.name }}")
         {
