@@ -1,0 +1,7 @@
+ convert frame00000001.png frame00000002.png -compose difference -composite -threshold 0 -separate -evaluate-sequence Add dave.png
+ 
+ compare -metric AE -fuzz 5% frame00000001.png frame00000002.png -compose Src -highlight-color White -lowlight-color Black mask.png
+ 
+ convert frame00000002.png mask.png -alpha Off -compose CopyOpacity -composite dave.png
+ 
+ 

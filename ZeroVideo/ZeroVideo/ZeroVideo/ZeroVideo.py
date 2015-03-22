@@ -17,7 +17,9 @@ from subprocess import *
 
 original_movie = "Countdown.wmv"
 
-#original_movie = "The Mysterious Floating Orb.mp4"
+original_movie = "The Mysterious Floating Orb.mp4"
+
+#original_movie = "London Brawling.mp4"
 
 print "Located video file at " + original_movie
 
@@ -46,11 +48,11 @@ for old_audio in glob.glob(os.path.expanduser("~\Documents\GitHub\Nada\VideoPres
 
 print "Extracting audio..."
 
-subprocess.call("ffmpeg -i \"" + original_movie + "\" -vn -ar 44100 -ac 2 -ab 96 -f mp3 vid_sound.mp3")
+subprocess.call("ffmpeg -i \"" + original_movie + "\" -vn -ar 44100 -ac 2 -ab 96k -f mp3 vid_sound.mp3")
 
 print "Splitting into frames..."
 
-subprocess.call("ffmpeg -i \"" + original_movie + "\" -r 24 frame%04d.png")
+subprocess.call("ffmpeg -i \"" + original_movie + "\" -r 24 frame%08d.png")
 
 print "Optimizing frames..."
 
@@ -64,11 +66,11 @@ tasks = []
 #
 #while True:
 #    idx += 1
-#    curpath = "frame" + str(idx).zfill(4) + ".png"
+#    curpath = "frame" + str(idx).zfill(8) + ".png"
 #    if not os.path.isfile(curpath):
 #        break
 #    print curpath.replace(".png", "_progressive")
-#    tasks.append(subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" -strip -resize 50% -gaussian-blur 0.05 -sampling-factor 4:2:0 -quality 80% -interlace Plane " + curpath + " " + curpath.replace(".png", "_progressive.jpg"))) # -define:extent=50000
+#    tasks.append(subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" -strip -resize 50% -gaussian-blur 0.08 -sampling-factor 4:2:0 -quality 80% -interlace Plane " + curpath + " " + curpath.replace(".png", "_progressive.jpg"))) # -define:extent=50000
 #
 #while len(tasks) > 0:
 #    for task in tasks:
@@ -81,11 +83,11 @@ tasks = []
 #
 #while True:
 #    idx += 1
-#    curpath = "frame" + str(idx).zfill(4) + ".png"
+#    curpath = "frame" + str(idx).zfill(8) + ".png"
 #    if not os.path.isfile(curpath):
 #        break
 #    print curpath.replace(".png", "_baseline")
-#    tasks.append(subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" -strip -resize 50% -gaussian-blur 0.05 -sampling-factor 4:2:0 -quality 80% " + curpath + " " + curpath.replace(".png", "_baseline.jpg")))
+#    tasks.append(subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" -strip -resize 50% -gaussian-blur 0.08 -sampling-factor 4:2:0 -quality 80% " + curpath + " " + curpath.replace(".png", "_baseline.jpg")))
 #
 #while len(tasks) > 0:
 #    for task in tasks:
@@ -98,9 +100,9 @@ tasks = []
 #
 #while True:
 #    idx += 1
-#    standard = "frame" + str(idx).zfill(4) + ".jpg"
-#    baseline = "frame" + str(idx).zfill(4) + "_baseline.jpg"
-#    progressive = "frame" + str(idx).zfill(4) + "_progressive.jpg"
+#    standard = "frame" + str(idx).zfill(8) + ".jpg"
+#    baseline = "frame" + str(idx).zfill(8) + "_baseline.jpg"
+#    progressive = "frame" + str(idx).zfill(8) + "_progressive.jpg"
 #    print baseline
 #    if not os.path.isfile(baseline):
 #        break
@@ -116,24 +118,28 @@ tasks = []
 #        shutil.copyfile(progressive, standard)
 
 print "Calculating square size..."
-side = str((Image.open("frame0001.png").size[0] - Image.open("frame0001.png").size[1]) * 0.60 / 2)
+side = str((Image.open("frame00000001.png").size[0] - Image.open("frame00000001.png").size[1]) * 0.60 / 2)
 
 while True:
     idx += 1
-    curpath = "frame" + str(idx).zfill(4) + ".png"
+    curpath = "frame" + str(idx).zfill(8) + ".png"
     if not os.path.isfile(curpath):
         break
     print curpath.replace(".png", "")
     tasks.append(subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" -strip -resize 80% -bordercolor black -border x" + side + " -gaussian-blur 0.05 -sampling-factor 4:2:0 -quality 65% " + curpath + " " + curpath.replace(".png", ".jpg")))
+    while len(tasks) > 50:
+        for task in tasks:
+            if not task.poll() == None:
+                tasks.remove(task)
 
-while len(tasks) > 0:
-    for task in tasks:
-        if not task.poll() == None:
-            tasks.remove(task)
+#while len(tasks) > 0:
+#    for task in tasks:
+#        if not task.poll() == None:
+#            tasks.remove(task)
 
 print "Generating preview of final video..."
 
-subprocess.call("ffmpeg -f image2 -i frame%04d.jpg -i vid_sound.mp3 -r 24 video.avi")
+subprocess.call("ffmpeg -f image2 -i frame%08d.jpg -i vid_sound.mp3 -r 24 video.avi")
 
 print "Calculating file size..."
 
@@ -145,7 +151,7 @@ for frame in glob.glob("*.jpg"):
 for audio in glob.glob("*.mp3"):
     size += os.path.getsize(audio)
 
-print str(size / 1048576) + " megabytes"
+print str(size / 1088576) + " megabytes"
 
 print "Importing into test project..."
 
@@ -156,14 +162,15 @@ framemeta = env.get_template('FrameMetadata.jpg.meta')
 with open(os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\Content\VideoPresenter.z"), "w") as zilchscript:
     result = vpresenter.render(framenum=str(len(glob.glob("*.jpg"))))
     print result
-    zilchscript.write(result)
+    zilchscript.write(result) 
     zilchscript.close()
 
-idx = 0
+if not (os.path.isfile("frame" + str(idx).zfill(8) + ".jpg") == True and os.path.isfile("frame" + str(idx + 1).zfill(8) + ".jpg") == False):
+    idx = 0
 
 while True:
     idx += 1
-    curpath = "frame" + str(idx).zfill(4) + ".jpg"
+    curpath = "frame" + str(idx).zfill(8) + ".jpg"
     if not os.path.isfile(curpath):
         break
     print curpath.replace(".jpg", "")
@@ -225,7 +232,7 @@ os.startfile(os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\Vide
 
 #while True:
 #    idx += 1
-#    curpath = "frame" + str(idx).zfill(4) + ".jpg"
+#    curpath = "frame" + str(idx).zfill(8) + ".jpg"
 #    if not os.path.isfile(curpath):
 #        break
 #    print curpath.replace(".jpg", ".ztex")
