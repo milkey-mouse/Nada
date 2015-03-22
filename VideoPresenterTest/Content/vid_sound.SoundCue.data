@@ -1,0 +1,22 @@
+SoundCue = 
+{
+	SoundPlayMode PlayMode = Single,
+	float Volume = 1,
+	float VolumeVariation = 0,
+	float Pitch = 0,
+	float PitchVariation = 0,
+	float MinDistance = 10,
+	float MaxDistance = 10000,
+	float PositionRandomization = 0,
+	uint MaxPlaybacks = 10,
+	int Priority = 128,
+	bool LinearRollOff = false,
+	Array Sounds = 
+	[
+		{
+			string SoundName = "551b56a5ddf752a0:vid_sound",
+			float Weight = 1,
+		},
+	],
+	string RolloffCurveName = "",
+},

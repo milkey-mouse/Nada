@@ -1,0 +1,38 @@
+class VideoPresenter : ZilchComponent
+{
+    var Fps : Real = 0.04166666666666666666666666666667;
+    
+    var Countdown : Real = 0.0;
+    
+    var CurFrame : Integer = 1;
+    
+    var Screen : Cog = null;
+    
+    var Frames : Integer = {{ framenum }};
+    
+    function Initialize(init : CogInitializer)
+    {
+        this.Screen = this.Space.FindObjectByName("Screen");
+        this.Screen.BoxParticleEmitter.Lifetime = this.Fps + 0.01;
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.Countdown += event.Dt;
+        if(this.Countdown >= this.Fps)
+        {
+            this.Countdown -= this.Fps;
+            Console.WriteLine("frame`this.CurFrame`");
+            if(this.CurFrame > this.Frames)
+            {
+                this.Owner.SoundEmitter.Stop();
+                this.Owner.SoundEmitter.Play();
+                this.CurFrame = 1;
+                this.Countdown = 0.0;
+            }
+            this.Screen.SpriteParticleSystem.Texture = Texture.Find("frame`this.CurFrame`");
+            this.CurFrame += 1;
+        }
+    }
+}

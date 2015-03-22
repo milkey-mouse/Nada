@@ -1,7 +1,7 @@
 import glob, os, sys, csv, msvcrt
 import pprint
 from jinja2 import Environment, FileSystemLoader
-ghn = "TheLegendofAdlez_experimental"
+ghn = "TheLegendofAdlez"
 
 levels = glob.glob(os.path.expanduser("~\Documents\GitHub\\" + ghn + "\THE GAME\Content\*.Level.data"))
 
