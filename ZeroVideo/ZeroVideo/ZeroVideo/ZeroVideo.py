@@ -118,7 +118,7 @@ tasks = []
 #        shutil.copyfile(progressive, standard)
 
 print "Calculating square size..."
-side = str((Image.open("frame00000001.png").size[0] - Image.open("frame00000001.png").size[1]) * 0.60 / 2)
+side = str((Image.open("frame00000001.png").size[0] - Image.open("frame00000001.png").size[1]) * 0.80 / 2)
 
 while True:
     idx += 1
