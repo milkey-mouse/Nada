@@ -1,0 +1,7 @@
+ContentLibrary = 
+{
+	string Name = "LosslessVideoTest",
+	uint64 LibraryId = 5505cf420834c67c,
+	string SourceControlType = "",
+	bool ReadOnly = false,
+},

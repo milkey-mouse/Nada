@@ -24,6 +24,14 @@
   <ItemGroup>
     <Compile Include="ZeroVideo.py" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="templates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="optipng.exe" />
+    <Content Include="templates\FrameMetadata.png.meta" />
+    <Content Include="templates\VideoPresenter.z" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>

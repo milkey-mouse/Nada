@@ -1,0 +1,7 @@
+ContentLibrary = 
+{
+	string Name = "VideoPresenterTest",
+	uint64 LibraryId = 5518a08935cf436e,
+	string SourceControlType = "",
+	bool ReadOnly = false,
+},

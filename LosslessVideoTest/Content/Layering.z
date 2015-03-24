@@ -1,0 +1,22 @@
+class Layering : ZilchComponent
+{
+    var Fps : Real = 0.04166666666666666666666666666667;
+    
+    var Countdown : Real = 0.01;
+    
+
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        //this.Countdown += event.Dt;
+        //if(this.Countdown >= this.Fps)
+        //{
+        //    this.Countdown -= this.Fps;
+            this.Owner.Transform.Translation -= Real3(0,0,0.1);
+        //}
+    }
+}

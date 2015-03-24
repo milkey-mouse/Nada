@@ -17,9 +17,9 @@ from subprocess import *
 #well, they said it couldn't be done *correctly*...
 #so i guess not
 
-original_movie = "Countdown.wmv"
+#original_movie = "Countdown.wmv"
 
-#original_movie = "The Mysterious Floating Orb.mp4"
+original_movie = "The Mysterious Floating Orb.mp4"
 
 #original_movie = "London Brawling.mp4"
 
@@ -39,13 +39,19 @@ for old_audio in glob.glob("*.mp3"):
 for old_video in glob.glob("*.avi"):
     os.remove(old_video)
 
-for old_frame in glob.glob(os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\Content\\") + "*.jpg"):
+for old_frame in glob.glob(os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\Content\\") + "*.jpg"):
     os.remove(old_frame)
 
-for old_meta in glob.glob(os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\Content\\") + "*.jpg.meta"):
+for old_meta in glob.glob(os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\Content\\") + "*.jpg.meta"):
     os.remove(old_meta)
 
-for old_audio in glob.glob(os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\Content\\") + "*.mp3"):
+for old_frame in glob.glob(os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\Content\\") + "*.png"):
+    os.remove(old_frame)
+
+for old_meta in glob.glob(os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\Content\\") + "*.png.meta"):
+    os.remove(old_meta)
+
+for old_audio in glob.glob(os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\Content\\") + "*.mp3"):
     os.remove(old_audio)
 
 print "Extracting audio..."
@@ -121,7 +127,9 @@ tasks = []
 
 print "Calculating square sizes..."
 
-side = str((Image.open("frame00000001.png").size[0] - Image.open("frame00000001.png").size[1]) * 0.75 / 2)
+resize = 0.5
+
+side = str((Image.open("frame00000001.png").size[0] - Image.open("frame00000001.png").size[1]) * resize / 2)
 
 pct_size = str(Image.open("frame00000001.png").size[0]) + "x" + str(Image.open("frame00000001.png").size[1])
 
@@ -146,7 +154,7 @@ with open(os.devnull, 'w') as tempf:
             tasks.append(nsp)
         elif os.path.isfile("frame" + str(idx + 1).zfill(8) + ".png"):
             print curpath.replace(".png", "")
-            nsp = subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\compare.exe\" -metric AE -fuzz 5% frame" + str(idx).zfill(8) + ".png frame" + str(idx + 1).zfill(8) + ".png -compose Src -highlight-color White -lowlight-color Black mask" + str(idx).zfill(8) + ".png", stdout=tempf, stderr=tempf)
+            nsp = subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\compare.exe\" -fuzz 5% frame" + str(idx - 1).zfill(8) + ".png frame" + str(idx).zfill(8) + ".png -compose Src -highlight-color White -lowlight-color Black omask" + str(idx).zfill(8) + ".png", stdout=tempf, stderr=tempf)
             #nsp.communicate()
             tasks.append(nsp)
         while len(tasks) > 50:
@@ -154,10 +162,36 @@ with open(os.devnull, 'w') as tempf:
                 if not task.poll() == None:
                     tasks.remove(task)
 
-while len(tasks) > 0:
-    for task in tasks:
-        if not task.poll() == None:
-            tasks.remove(task)
+    while len(tasks) > 0:
+        for task in tasks:
+            if not task.poll() == None:
+                tasks.remove(task)
+
+print "Dilating diff masks..."
+
+idx = 0
+
+with open(os.devnull, 'w') as tempf:
+    while True:
+        idx += 1
+        curpath = "omask" + str(idx).zfill(8) + ".png"
+        if not os.path.isfile(curpath):
+            if os.path.isfile("omask" + str(idx + 1).zfill(8) + ".png"):
+                continue
+            else:
+                break
+        print curpath.replace(".png", "")
+        nsp = subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" omask" + str(idx).zfill(8) + ".png -blur 5x65000 -threshold 0 -fill white -opaque white mask" + str(idx).zfill(8) + ".png", stdout=tempf, stderr=tempf)
+        tasks.append(nsp)
+        while len(tasks) > 50:
+            for task in tasks:
+                if not task.poll() == None:
+                    tasks.remove(task)
+
+    while len(tasks) > 0:
+        for task in tasks:
+            if not task.poll() == None:
+                tasks.remove(task)
 
 print "Generating colored diffs..."
 
@@ -170,7 +204,7 @@ with open(os.devnull, 'w') as tempf:
         if not os.path.isfile(curpath):
             break
         print curpath.replace(".png", "")
-        nsp = subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" frame" + str(idx).zfill(8) + ".png mask" + str(idx).zfill(8) + ".png -alpha Off -compose CopyOpacity -composite diff" + str(idx).zfill(8) + ".png", stdout=tempf, stderr=tempf)
+        nsp = subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" frame" + str(idx).zfill(8) + ".png mask" + str(idx).zfill(8) + ".png -alpha Off -compose CopyOpacity -strip -resize " + str(round(resize * 100)) + "% -quality 00 -composite final" + str(idx).zfill(8) + ".png", stdout=tempf, stderr=tempf)
         #nsp.communicate()
         tasks.append(nsp)
         while len(tasks) > 50:
@@ -183,19 +217,20 @@ while len(tasks) > 0:
         if not task.poll() == None:
             tasks.remove(task)
 
-print "Generating bordered diffs..."
+print "Optimizing colored diffs..."
+
+#no borders this time
 
 idx = 0
 
 with open(os.devnull, 'w') as tempf:
     while True:
         idx += 1
-        curpath = "diff" + str(idx).zfill(8) + ".png"
+        curpath = "final" + str(idx).zfill(8) + ".png"
         if not os.path.isfile(curpath):
             break
         print curpath.replace(".png", "")
-        nsp = subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" -strip -compose Copy -resize 80% -bordercolor black -border x" + side + " diff" + str(idx).zfill(8) + ".png final" + str(idx).zfill(8) + ".png", stdout=tempf, stderr=tempf)
-        #nsp.communicate()
+        nsp = subprocess.Popen("optipng.exe " + curpath, stdout=tempf, stderr=tempf)
         tasks.append(nsp)
         while len(tasks) > 50:
             for task in tasks:
@@ -225,16 +260,18 @@ print "Importing into test project..."
 
 env = Environment(loader=FileSystemLoader('templates'))
 vpresenter = env.get_template('VideoPresenter.z')
-framemeta = env.get_template('FrameMetadata.jpg.meta')
+framemeta = env.get_template('FrameMetadata.png.meta')
 
-with open(os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\Content\VideoPresenter.z"), "w") as zilchscript:
-    result = vpresenter.render(framenum=str(len(glob.glob("*.jpg"))))
+with open(os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\Content\VideoPresenter.z"), "w") as zilchscript:
+    result = vpresenter.render(framenum=str(len(glob.glob("final*.png"))))
     print result
     zilchscript.write(result) 
     zilchscript.close()
 
-if not (os.path.isfile("final" + str(idx).zfill(8) + ".png") == True and os.path.isfile("final" + str(idx + 1).zfill(8) + ".png") == False):
-    idx = 0
+size_x = str(Image.open("final00000001.png").size[0])
+size_y = str(Image.open("final00000001.png").size[1])
+origin_x = str(Image.open("final00000001.png").size[0] / 2)
+origin_y = str(Image.open("final00000001.png").size[1] / 2)
 
 while True:
     idx += 1
@@ -242,14 +279,14 @@ while True:
     if not os.path.isfile(curpath):
         break
     print curpath.replace(".png", "")
-    shutil.copyfile(curpath.replace("frame", "final"), os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\Content\\" + curpath))
-    with open(os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\Content\\" + curpath + ".meta"), "w") as metadata:
-        result = framemeta.render(frameid=str(idx),resid=str(uuid.uuid4().get_hex().lower()[0:16]))
+    shutil.copyfile(curpath.replace("frame", "final"), os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\Content\\" + curpath))
+    with open(os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\Content\\" + curpath + ".meta"), "w") as metadata:
+        result = framemeta.render(frameid=str(idx),resid=str(uuid.uuid4().get_hex().lower()[0:16]),framesizex=size_x,framesizey=size_y,frameoriginx=origin_x,frameoriginy=origin_y)
         print result
         metadata.write(result)
         metadata.close()
 print "vid_sound.mp3"
-shutil.copyfile("vid_sound.mp3", os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\Content\\vid_sound.mp3"))
+shutil.copyfile("vid_sound.mp3", os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\Content\\vid_sound.mp3"))
 
 print "Done!"
 
@@ -260,23 +297,30 @@ etc = size / 30922 / 60
 #574 seconds
 #30922 bytes/second
 
-print "At 30922 bytes/second (average), compilation should take about " + str(etc) + " minutes to complete."
+print "Cleaning up..."
 
-if etc < 15 and etc > 3:
-    print "Go drink some coffee!"
-else:
-    print "Go Reddit!"
+for old_frame in glob.glob("*.jpg"):
+    os.remove(old_frame)
+
+for old_frame in glob.glob("*.png"):
+    os.remove(old_frame)
+
+for old_audio in glob.glob("*.mp3"):
+    os.remove(old_audio)
+
+for old_video in glob.glob("*.avi"):
+    os.remove(old_video)
 
 time.sleep(2)
 
-os.startfile(os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\VideoPresenterTest.zeroproj"))
+os.startfile(os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\LosslessVideoTest.zeroproj"))
 
 #time.sleep(2)
 #os.startfile("video.avi")
 
 #print "Locating cache..."
 
-#zengine_ui = subprocess.Popen(("C:\Program Files (x86)\ZeroEditor\ZeroEditor.exe", os.path.expanduser("~\Documents\GitHub\Nada\VideoPresenterTest\VideoPresenterTest.zeroproj")))
+#zengine_ui = subprocess.Popen(("C:\Program Files (x86)\ZeroEditor\ZeroEditor.exe", os.path.expanduser("~\Documents\GitHub\Nada\LosslessVideoTest\LosslessVideoTest.zeroproj")))
 #time.sleep(3)
 #zengine_ui.terminate()
 #time.sleep(2)

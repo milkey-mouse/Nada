@@ -1,0 +1,18 @@
+class TimedDeath : ZilchComponent
+{
+    //The amount of time before this object will be destroyed
+    [Property]
+    var Lifetime : Real = 1.1;
+    
+    function Initialize(init : CogInitializer)
+    {
+        var seq = Action.Sequence(this.Owner.Actions);
+        Action.Delay(seq, this.Lifetime);
+        Action.Call(seq, this.OnDeath);
+    }
+    
+    function OnDeath()
+    {
+        this.Owner.Destroy();
+    }
+}

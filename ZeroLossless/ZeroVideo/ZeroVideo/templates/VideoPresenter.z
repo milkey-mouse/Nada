@@ -13,7 +13,6 @@ class VideoPresenter : ZilchComponent
     function Initialize(init : CogInitializer)
     {
         this.Screen = this.Space.FindObjectByName("Screen");
-        this.Screen.BoxParticleEmitter.Lifetime = 1.0 + this.Fps;
         Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
     }
 
@@ -31,7 +30,8 @@ class VideoPresenter : ZilchComponent
                 this.CurFrame = 1;
                 this.Countdown = 0.0;
             }
-            this.Screen.SpriteParticleSystem.Texture = Texture.Find("frame`this.CurFrame`");
+            var nf = this.Space.Create(Archetype.Find("ScreenFrame"));
+            nf.Sprite.SpriteSource = SpriteSource.Find("frame`this.CurFrame`");
             this.CurFrame += 1;
         }
     }
