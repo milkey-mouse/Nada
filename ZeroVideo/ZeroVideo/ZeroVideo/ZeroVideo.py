@@ -15,9 +15,9 @@ from subprocess import *
 #well, they said it couldn't be done *correctly*...
 #so i guess not
 
-original_movie = "Countdown.wmv"
+#original_movie = "Countdown.wmv"
 
-#original_movie = "The Mysterious Floating Orb.mp4"
+original_movie = "The Mysterious Floating Orb.mp4"
 
 #original_movie = "London Brawling.mp4"
 

@@ -1,6 +1,9 @@
 class PanelUI : ZilchComponent
 {
+
     var LastType : String = "";
+    
+    var Tb : Real = 0.055;
     
     function Initialize(init : CogInitializer)
     {
@@ -9,6 +12,10 @@ class PanelUI : ZilchComponent
 
     function OnLogicUpdate(event : UpdateEvent)
     {
+        if(this.Owner.PanelLogic.Target == null)
+        {
+            return;
+        }
         if(this.Owner.PanelLogic.Target.ArchetypeName == null)
         {
             return;
@@ -17,7 +24,9 @@ class PanelUI : ZilchComponent
         {
             return;
         }
-		var tb : Real = 0.055;
+        
+		var tb : Real = this.Tb;
+		
 		{% for arch in archetypes %}
         if(this.Owner.PanelLogic.Target.ArchetypeName == "{{ arch.name }}")
         {
@@ -41,6 +50,13 @@ class PanelUI : ZilchComponent
 			{% endfor %}
         }
 		{% endfor %}
+
         this.LastType = this.Owner.PanelLogic.Target.ArchetypeName;
+        
+        this.Owner.Parent.FindChildByName("Scrollbar").FindChildByName("Nub").ScrollBar.CurPos = -0.1;
+        
+        this.Owner.Parent.FindChildByName("Scrollbar").FindChildByName("Nub").ScrollBar.Reset();
+        
+        this.Owner.Parent.FindChildByName("Scrollbar").FindChildByName("Nub").ScrollBar.UpdateUI();
     }
 }

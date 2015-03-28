@@ -15,7 +15,7 @@ Cog =
 	Transform = 
 	{
 		Vec3 Translation = [0, 0, 0],
-		Vec3 Scale = [1.6, 1.6, 1],
+		Vec3 Scale = [2, 2, 1],
 		Quat Rotation = [0, 0, 0, 1],
 	},
 	TimedDeath = 
@@ -32,7 +32,7 @@ Cog =
 		BlendMode BlendMode = Alpha,
 		SpriteGeometryMode GeometryMode = ZPlane,
 		string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-		string SpriteSource = "666c8dc46997441b:frame1",
+		string SpriteSource = "b6e8f6c54ee149ad:frame1",
 		bool RenderMask = false,
 		bool FlipX = false,
 		bool FlipY = false,

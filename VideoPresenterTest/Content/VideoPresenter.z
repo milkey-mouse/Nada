@@ -8,12 +8,12 @@ class VideoPresenter : ZilchComponent
     
     var Screen : Cog = null;
     
-    var Frames : Integer = 0;
+    var Frames : Integer = 400;
     
     function Initialize(init : CogInitializer)
     {
         this.Screen = this.Space.FindObjectByName("Screen");
-        this.Screen.BoxParticleEmitter.Lifetime = 1.0 + this.Fps;
+        this.Screen.BoxParticleEmitter.Lifetime = this.Fps + 0.01;
         Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
     }
 

@@ -17,9 +17,9 @@ from subprocess import *
 #well, they said it couldn't be done *correctly*...
 #so i guess not
 
-#original_movie = "Countdown.wmv"
+original_movie = "Countdown.wmv"
 
-original_movie = "The Mysterious Floating Orb.mp4"
+#original_movie = "The Mysterious Floating Orb.mp4"
 
 #original_movie = "London Brawling.mp4"
 
@@ -147,14 +147,14 @@ with open(os.devnull, 'w') as tempf:
         curpath = "frame" + str(idx).zfill(8) + ".png"
         if not os.path.isfile(curpath):
             break
-        if idx % 24 == 1:
+        if idx % 12 == 1: #you can replace 12 with 24 for slight file savings
             print curpath.replace(".png", "") + " - keyframe"
             nsp = subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\convert.exe\" -size " + pct_size + "x" + pct_size + " xc:white " + "mask" + str(idx).zfill(8) + ".png", stdout=tempf, stderr=tempf)
             #nsp.communicate()
             tasks.append(nsp)
         elif os.path.isfile("frame" + str(idx + 1).zfill(8) + ".png"):
             print curpath.replace(".png", "")
-            nsp = subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\compare.exe\" -fuzz 5% frame" + str(idx - 1).zfill(8) + ".png frame" + str(idx).zfill(8) + ".png -compose Src -highlight-color White -lowlight-color Black omask" + str(idx).zfill(8) + ".png", stdout=tempf, stderr=tempf)
+            nsp = subprocess.Popen("\"C:\Program Files\ImageMagick-6.8.9-Q16\compare.exe\" -fuzz 3% frame" + str(idx - 1).zfill(8) + ".png frame" + str(idx).zfill(8) + ".png -compose Src -highlight-color White -lowlight-color Black omask" + str(idx).zfill(8) + ".png", stdout=tempf, stderr=tempf)
             #nsp.communicate()
             tasks.append(nsp)
         while len(tasks) > 50:
@@ -245,6 +245,8 @@ while len(tasks) > 0:
 #no preview for this version
 
 print "Calculating file size..."
+
+idx = 0
 
 size = 0
 

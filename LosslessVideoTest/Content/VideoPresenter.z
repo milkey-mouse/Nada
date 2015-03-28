@@ -8,7 +8,7 @@ class VideoPresenter : ZilchComponent
     
     var Screen : Cog = null;
     
-    var Frames : Integer = 399;
+    var Frames : Integer = 124;
     
     function Initialize(init : CogInitializer)
     {
@@ -25,6 +25,8 @@ class VideoPresenter : ZilchComponent
             Console.WriteLine("frame`this.CurFrame`");
             if(this.CurFrame > this.Frames)
             {
+                this.GameSession.Quit();
+                debug return;
                 this.Owner.SoundEmitter.Stop();
                 this.Owner.SoundEmitter.Play();
                 this.CurFrame = 1;
