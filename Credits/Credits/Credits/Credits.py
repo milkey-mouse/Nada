@@ -64,8 +64,11 @@ for tag in linedict[""]:
         for item in linedict[tag]:
             if item.endswith(":"):
                 formatted.append(("53f62bf3a4deae78:wendy", 70, gold, item.replace(":", "")))
-                for small_item in linedict[item]:
-                    formatted.append(("4e7bac697bec55c5:Verdana", 45, white, small_item))
+                try:
+                    for small_item in linedict[item]:
+                        formatted.append(("4e7bac697bec55c5:Verdana", 45, white, small_item))
+                except:
+                    pass
             else:
                 formatted.append(("4e7bac697bec55c5:Verdana", 45, white, item.replace(":", "")))
     else:
@@ -85,7 +88,7 @@ level_template = env.get_template('CreditsLevelTemplate.Level.data')
 
 jinjadict = []
 
-uid = 5
+uid = 6
 
 pos = 0.0
 
